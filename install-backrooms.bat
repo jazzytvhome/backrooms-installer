@@ -16,9 +16,9 @@ $mods = @(
 
 # e4mc - download straight from Modrinth (tiny mod, lets you host via LAN with no port forwarding)
 function Download-E4MC {
-    Write-Host "  Fetching e4mc (LAN hosting)..." -ForegroundColor Cyan
+    Write-Host "  Fetching e4all (LAN hosting for offline accounts)..." -ForegroundColor Cyan
     try {
-        $uri = "https://api.modrinth.com/v2/project/e4mc_minecraft/version?game_versions=[`"1.20.1`"]&loaders=[`"fabric`"]"
+        $uri = "https://api.modrinth.com/v2/project/e4all/version?game_versions=[`"1.20.1`"]&loaders=[`"fabric`"]"
         $versions = Invoke-RestMethod -Uri $uri -UseBasicParsing
         $file = $versions[0].files | Where-Object { $_.primary -eq $true } | Select-Object -First 1
         if (-not $file) { $file = $versions[0].files[0] }
