@@ -14,6 +14,23 @@ $mods = @(
     "voicechat-fabric-1.20.1-2.6.18.jar"
 )
 
+# e4mc - download straight from Modrinth (tiny mod, lets you host via LAN with no port forwarding)
+function Download-E4MC {
+    Write-Host "  Fetching e4mc (LAN hosting)..." -ForegroundColor Cyan
+    try {
+        $uri = "https://api.modrinth.com/v2/project/e4mc_minecraft/version?game_versions=[`"1.20.1`"]&loaders=[`"fabric`"]"
+        $versions = Invoke-RestMethod -Uri $uri -UseBasicParsing
+        $file = $versions[0].files | Where-Object { $_.primary -eq $true } | Select-Object -First 1
+        if (-not $file) { $file = $versions[0].files[0] }
+        $dest = Join-Path $modsDir $file.filename
+        if (Test-Path $dest) { Write-Host "  Already installed: $($file.filename)" -ForegroundColor Yellow; return }
+        Invoke-WebRequest -Uri $file.url -OutFile $dest -UseBasicParsing
+        Write-Host "  Done!" -ForegroundColor Green
+    } catch {
+        Write-Host "  [ERROR] Failed to download e4mc: $_" -ForegroundColor Red
+    }
+}
+
 Write-Host ""
 Write-Host " =====================================================" -ForegroundColor Green
 Write-Host "   Found Footage (Backrooms) Mod Installer" -ForegroundColor Green
@@ -41,6 +58,8 @@ foreach ($mod in $mods) {
         Start-Sleep 10; exit 1
     }
 }
+
+Download-E4MC
 
 Write-Host ""
 Write-Host " =====================================================" -ForegroundColor Green
